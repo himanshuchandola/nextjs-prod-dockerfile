@@ -1,0 +1,32 @@
+# Use a lightweight Node.js base image
+ARG NODE_VERSION=22.14.0-alpine
+ARG PNPM_VERSION=9.0.0
+FROM node:${NODE_VERSION} AS base
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Install pnpm globally with specific version
+RUN npm install -g pnpm@${PNPM_VERSION}
+
+# Copy package.json and pnpm-lock.yaml first for caching
+COPY --link package.json pnpm-lock.yaml ./
+
+# Ensure the correct permissions for the non-root user
+RUN chown -R node:node /app
+
+# Switch to the node user BEFORE installing dependencies
+USER node
+
+# Install dependencies (including devDependencies for development)
+# Also install the @tailwindcss/postcss package required for Tailwind CSS 4
+RUN pnpm install && pnpm add @tailwindcss/postcss autoprefixer
+
+# Copy the entire project (after dependencies for better caching)
+COPY --link --chown=node:node . .
+
+# Expose Next.js default port
+EXPOSE 3000
+
+# Default command to start the Next.js development server
+CMD ["pnpm", "run", "dev"]
