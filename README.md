@@ -1,3 +1,5 @@
+# Welcome to Next.js 15.2 Production Docker file!
+
 This repository contains the configuration for running a Next.js 15 application using Docker with pnpm and Tailwind CSS 4. It supports development, production, and static export modes with three different Dockerfiles and a docker-compose.yml file.
 
 - 📖 [Next.js Deployment docs](https://nextjs.org/docs/pages/building-your-application/deploying)
